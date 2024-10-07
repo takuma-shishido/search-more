@@ -1,0 +1,4 @@
+__pycache__/
+migrations/
+django/
+.DS_Store

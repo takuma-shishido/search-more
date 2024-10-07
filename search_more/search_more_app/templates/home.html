@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>検索結果</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 p-6">
+    <form method="get" class="bg-white p-6 rounded-lg shadow-md space-y-4 max-w-2xl mx-auto"> 
+        <!-- 検索キーワード入力 --> 
+        {{ form.as_p }} 
+
+        <!-- カテゴリの選択 --> 
+        <div>
+            <label for="category" class="block text-sm font-medium text-gray-700">カテゴリ:</label> 
+            <select name="category" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"> 
+                <option value="">すべて</option> 
+                <option value="本" {% if request.GET.category == "本" %}selected{% endif %}>本</option> 
+                <option value="電子書籍" {% if request.GET.category == "電子書籍" %}selected{% endif %}>電子書籍</option> 
+                <!-- 他のカテゴリを追加 --> 
+            </select> 
+        </div>
+
+        <!-- 価格範囲の入力 --> 
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+                <label for="min_price" class="block text-sm font-medium text-gray-700">最低価格:</label> 
+                <input type="number" name="min_price" min="0" value="{{ request.GET.min_price }}" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"> 
+            </div>
+            <div>
+                <label for="max_price" class="block text-sm font-medium text-gray-700">最高価格:</label> 
+                <input type="number" name="max_price" min="0" value="{{ request.GET.max_price }}" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"> 
+            </div>
+        </div>
+
+        <!-- 並び替えの選択 --> 
+        <div>
+            <label for="sort" class="block text-sm font-medium text-gray-700">並び替え:</label> 
+            <select name="sort" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"> 
+                <option value="name" {% if request.GET.sort == "name" %}selected{% endif %}>名前</option> 
+                <option value="price_asc" {% if request.GET.sort == "price_asc" %}selected{% endif %}>低価格順</option> 
+                <option value="price_desc" {% if request.GET.sort == "price_desc" %}selected{% endif %}>高価格順</option> 
+            </select>
+        </div>
+     
+        <button type="submit" class="bg-indigo-600 text-white py-2 px-4 rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">検索</button> 
+    </form>
+
+    <ul class="mt-6 space-y-4 max-w-2xl mx-auto"> 
+    {% for product in page_obj %} 
+        <li class="bg-white p-4 rounded-lg shadow-md flex justify-between items-center">
+            <div>
+                <h3 class="text-lg font-medium">{{ product.name }}</h3>
+                <p class="text-gray-500">{{ product.description }}</p>
+            </div>
+            <span class="text-gray-700 font-semibold">{{ product.price }}</span>
+        </li> 
+    {% empty %} 
+        <li class="bg-white p-4 rounded-lg shadow-md text-center">結果が見つかりませんでした</li> 
+    {% endfor %} 
+    </ul> 
+
+    <div class="pagination mt-6 max-w-2xl mx-auto"> 
+        <span class="step-links flex justify-center space-x-2"> 
+            {% if page_obj.has_previous %} 
+                <a href="?{% if query_params %}{{ query_params.urlencode }}&{% endif %}page=1" class="px-3 py-1 bg-gray-200 rounded-md">最初</a> 
+                <a href="?{% if query_params %}{{ query_params.urlencode }}&{% endif %}page={{ page_obj.previous_page_number }}" class="px-3 py-1 bg-gray-200 rounded-md">前へ</a>  
+            {% endif %} 
+            <span class="current px-3 py-1 bg-gray-200 rounded-md"> 
+                ページ {{ page_obj.number }} / {{ page_obj.paginator.num_pages }} 
+            </span> 
+            {% if page_obj.has_next %} 
+                <a href="?{% if query_params %}{{ query_params.urlencode }}&{% endif %}page={{ page_obj.next_page_number }}" class="px-3 py-1 bg-gray-200 rounded-md">次へ</a>   
+                <a href="?{% if query_params %}{{ query_params.urlencode }}&{% endif %}page={{ page_obj.paginator.num_pages }}" class="px-3 py-1 bg-gray-200 rounded-md">最後</a>  
+            {% endif %} 
+        </span> 
+    </div>
+</body>
+</html>
