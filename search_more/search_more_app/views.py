@@ -53,6 +53,9 @@ def search_view(request):
     results = Product.objects.all()  # クエリセットの初期化
     if form.is_valid():
         query = form.cleaned_data["query"]
+        if query == "admin":
+            return redirect("product_list")
+        
         if query:
             results = results.filter(name__icontains=query)
     # カテゴリフィルタリング
