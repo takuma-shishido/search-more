@@ -66,15 +66,8 @@ WSGI_APPLICATION = "search_more_project.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": "search_db",
-        "USER": "admin",
-        "PASSWORD": "Pl3453Ch4n63M3!",
-        "HOST": "100.108.221.29",
-        "PORT": "25579",
-        "OPTIONS": {
-            "options": "-c search_path=public",
-        },
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
 
